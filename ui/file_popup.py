@@ -76,4 +76,5 @@ class FilePopup(Popup):
         self.popup = None
         Window.size = (700, 500)
         # print(self.fileChooser.selection)
-        ChooseColumns.readPath(self.fileChooser.selection)
+        return ChooseColumns(self.fileChooser.selection)
+
