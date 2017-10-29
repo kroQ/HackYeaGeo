@@ -8,6 +8,7 @@
 
 # Sensitive or high-churn files:
 .idea/
+__pycached__
 .idea/**/dataSources/
 .idea/**/dataSources.ids
 .idea/**/dataSources.xml
