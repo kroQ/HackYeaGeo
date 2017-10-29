@@ -30,9 +30,9 @@ def save_ready_csv(data_queue, filename, header=None):
 
         while not data_queue.empty():
             row = data_queue.get()
-            print("row:", row)
+            # print("row:", row)
             str_line = ";".join(row) + '\n'
-            print(filename, "Save:", str_line)
+            # print(filename, "Save:", str_line)
             f.write(str_line)
 
 
