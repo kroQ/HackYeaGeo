@@ -3,7 +3,7 @@ from ui.choose_file import ChooseFile
 from kivy.core.window import Window
 
 
-class Init(App):
+class Main(App):
 
     def build(self):
         Window.size = (300, 150)
@@ -11,4 +11,4 @@ class Init(App):
 
 
 if __name__ == '__main__':
-    Init().run()
+    Main().run()
