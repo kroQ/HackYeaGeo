@@ -8,6 +8,7 @@ from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.uix.dropdown import DropDown
 from kivy.base import runTouchApp
+from ui.choose_columns import ChooseColumns
 import win32api
 
 
@@ -70,8 +71,9 @@ class FilePopup(Popup):
         # all done, open the popup !
         popup.open()
 
-    def _validate(self, fileChooserInstance):
+    def _validate(self, dupa):
         self.popup.dismiss()
         self.popup = None
-
-        print (self.fileChooser.selection)
+        Window.size = (700, 500)
+        # print(self.fileChooser.selection)
+        ChooseColumns.readPath(self.fileChooser.selection)
