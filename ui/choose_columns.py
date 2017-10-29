@@ -16,22 +16,35 @@ class ChooseColumns(GridLayout):
     #     print(heders)
     #     ChooseColumns()
 
-    def zButaWjezdzam(self):
-        return None
-
     def __init__(self, dupa, **kwargs):
         super(ChooseColumns, self).__init__(**kwargs)
+        self.hhh = {}
+        self.selected = []
+        self.selected.append("SAdas")
+
+        def get_r():
+            return  self.selected, 4, None
+
+        def zButaWjezdzam(instance):
+            for lol in self.hhh:
+                print(lol)
+            print("BACH")
+
         content = GridLayout()
         self.popup = popup = Popup(title="Choose header rows", content=content, size_hint = (None,None), size=(700,500))
 
 
         heders = csv_loadHeader(dupa[0])
         print(heders)
+        self.hhh = heders
 
         content.cols = 6
         for i in heders:
             content.add_widget(CheckBox())
             content.add_widget(Label(text=i))
+        btn1 = Button(text="Analysis")
+        content.add_widget(btn1)
+        btn1.bind(on_press=zButaWjezdzam)
         popup.open()
 
         # super(ChooseFile, self).__init__(**kwargs)
