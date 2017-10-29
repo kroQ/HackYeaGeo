@@ -20,13 +20,14 @@ class FilePopup(Popup):
         content = BoxLayout(orientation='vertical', spacing=5)
         self.popup = popup = Popup(title=self.title,
                                    content=content, size_hint=(None, None), size=(600, 400))
+        self.fileChooser = fileChooser = FileChooserListView(size_hint_y=None)
 
         drives = win32api.GetLogicalDriveStrings()
         drives = drives.split('\000')[:-1]
 
         def test(drive):
             # first, create the scrollView
-            self.fileChooser = fileChooser = FileChooserListView(size_hint_y=None)
+
             fileChooser.path = drive
             fileChooser.bind(on_submit=self._validate)
             fileChooser.height = 500  # this is a bit ugly...
@@ -69,15 +70,8 @@ class FilePopup(Popup):
         # all done, open the popup !
         popup.open()
 
-    def _validate(self, fileChooserInstance, selected, touch):
-        value = selected[0]
+    def _validate(self, fileChooserInstance):
         self.popup.dismiss()
         self.popup = None
-        # if the value was empty, don't change anything.
-        if value == '':
-            # do what you would do if the user didn't select any file
-            return
 
-        # do what you would do if the user selected a file.
-        print
-        'choosen file: %s' % value
+        print (self.fileChooser.selection)
