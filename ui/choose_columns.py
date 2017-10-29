@@ -1,4 +1,5 @@
 from kivy.app import App
+import winsound
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.button import Button
@@ -12,6 +13,7 @@ import csv
 from builtins import Exception
 from data import *
 from queue import Queue
+from ui.the_end import TheEnd
 
 import sys
 
@@ -351,11 +353,26 @@ class ChooseColumns(GridLayout):
 
 
 
-            with open("log.txt", "w", encoding="utf-8-sig") as f:
-                f.write(log_file_str)
-            print(log_file_str)
+            # with open("log.txt", "w", encoding="utf-8-sig") as f:
+            #     f.write(log_file_str)
+            # print(log_file_str)
+
+            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
+            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
+            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
+
+            frequency = 2500  # Set Frequency To 2500 Hertz
+            duration = 1000  # Set Duration To 1000 ms == 1 second
+            winsound.Beep(frequency, duration)
+
+            self.toTheEnd()
+
             # for el in no_matched:
             #   print(el[1], el[2], el[5])
+
+    def toTheEnd(instance):
+        Window.size = (700, 500)
+        TheEnd()
 
     def __init__(self, choosing_path_and_file, **kwargs):
         super(ChooseColumns, self).__init__(**kwargs)
