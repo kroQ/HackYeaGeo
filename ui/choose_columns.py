@@ -14,6 +14,7 @@ from builtins import Exception
 from data import *
 from queue import Queue
 from ui.the_end import TheEnd
+import time
 
 import sys
 
@@ -211,7 +212,9 @@ class ChooseColumns(GridLayout):
             # print("sss:", len(to_remove_list), to_remove_list)
             # print("prefixes_to_remove:", len(prefixes_to_remove), prefixes_to_remove)
             # sys.exit(0)
-
+            frequency = 2500  # Set Frequency To 2500 Hertz
+            duration = 300  # Set Duration To 1000 ms == 1 second
+            winsound.Beep(frequency, duration)
 
             print("")
             print("")
@@ -224,6 +227,8 @@ class ChooseColumns(GridLayout):
             print("")
 
 
+            startDate = time.strftime("%Y-%m-%d %H:%M:%S")
+            start_process_time = time.time()
 
             to_second_match = []
 
@@ -273,8 +278,6 @@ class ChooseColumns(GridLayout):
             address_dict_header = csv_loadHeader(address_dict_filename, dict_columns)
             address_dict = csv_load(address_dict_filename, skip_first_line=True, columns=dict_columns)
 
-            start_process_time = time.time()
-
             # print(address_dict_header)
             # print(len(address_dict), address_dict[0])
             dict_by_column_index = 1
@@ -287,6 +290,14 @@ class ChooseColumns(GridLayout):
 
             # print("---------------------", len(to_second_match))
             # print("dict_nazwa_glowna_czesc:", dict_nazwa_glowna_czesc)
+
+            dict_nazwa_glowna_czesc_fifxed = {}
+            for key in dict_nazwa_glowna_czesc.keys():
+                value = dict_nazwa_glowna_czesc[key]
+                fixed_key = remove_prefix(to_remove_list, key)
+                dict_nazwa_glowna_czesc_fifxed[fixed_key] = value
+
+            to_third_match = []
 
             for in_row in to_second_match:
                 # print("Second(", len(to_second_match), "):", in_row)
@@ -315,10 +326,38 @@ class ChooseColumns(GridLayout):
                         i += 1
                         continue
 
+                # queue_nomatched.put(in_row)
+                to_third_match.append(in_row)
+
+            for in_row in to_third_match:
+                in_ul = remove_prefix(to_remove_list, in_row[ul_in_column])
+
+                nr_bud = None
+                if nr_in_column is not None:
+                    nr_bud = in_row[nr_in_column]
+
+                if nr_in_column is None:
+                    temp = in_ul.split()
+                    nr_bud = temp[-1]
+                    temp.pop(-1)
+                    in_ul = " ".join(temp)
+                    # print(in_row[ul_in_column], " => :::: in ul:", in_ul, "nr:", nr_bud)
+
+                if in_ul in dict_nazwa_glowna_czesc_fifxed:  # ["stanislata lema", "barbary fa"]
+                    if nr_bud in dict_nazwa_glowna_czesc_fifxed[in_ul].keys():
+                        x = dict_nazwa_glowna_czesc_fifxed[in_ul][nr_bud][0][0]
+                        y = dict_nazwa_glowna_czesc_fifxed[in_ul][nr_bud][0][1]
+                        # print(in_row, "=>", [in_row, x, y])
+                        in_row.append(x)
+                        in_row.append(y)
+                        queue_matched.put(in_row)
+                        i += 1
+                        continue
+
                 queue_nomatched.put(in_row)
-                # to_second_match.append(in_row)
 
             stop_process_time = time.time()
+            stopData = time.strftime("%Y-%m-%d %H:%M:%S")
 
             print("=============================================================")
             print("============= Geolokacja zakończona powodzeniem =============")
@@ -329,40 +368,39 @@ class ChooseColumns(GridLayout):
 
             log_file_str = ("Summary: \n"
                             "Input data lines: " + str(len(input_data)) +
+                            "\nStart date: " + startDate +
+                            "\nStop date: " + stopData +
                             "\nMatched: " + str(queue_matched.qsize()) +
                             "\nNo matched: " + str(queue_nomatched.qsize()) +
                             "\nProcess time: " + str(stop_process_time - start_process_time) + "s")
+
 
             header = csv_loadHeader(input_data_filename)
             headerxy = header
             headerxy.append('x')
             headerxy.append('y')
             headerxy = ";".join(headerxy)
-            save_ready_csv(queue_matched, "test00.csv", headerxy)
-            save_ready_csv(queue_nomatched, "testNoMatched.csv", ";".join(header))
+            save_ready_csv(queue_matched, "Matched.csv", headerxy)
+            save_ready_csv(queue_nomatched, "NotMatched.csv", ";".join(header))
 
             print("=============================================================")
             print("=========== Zakończono zapisywanie z powodzeniem ============")
             print("=============================================================")
+            #
+            # print("Summary: \n")
+            # print("Input data lines: ", len(input_data))
+            # print("\nMatched: ", queue_matched.qsize())
+            # print("\nNo matched: ", queue_nomatched.qsize())
+            # print("\nProcess time: ", stop_process_time - start_process_time)
 
-            print("Summary: \n")
-            print("Input data lines: ", len(input_data))
-            print("\nMatched: ", queue_matched.qsize())
-            print("\nNo matched: ", queue_nomatched.qsize())
-            print("\nProcess time: ", stop_process_time - start_process_time)
+            print(log_file_str)
 
-
-
-            # with open("log.txt", "w", encoding="utf-8-sig") as f:
-            #     f.write(log_file_str)
+            with open("log.txt", "w", encoding="utf-8-sig") as f:
+                f.write(log_file_str)
             # print(log_file_str)
 
-            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
-            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
-            print("fdsj;oahfaksdjlhflkajshdflkajshdflk")
-
             frequency = 2500  # Set Frequency To 2500 Hertz
-            duration = 1000  # Set Duration To 1000 ms == 1 second
+            duration = 300  # Set Duration To 1000 ms == 1 second
             winsound.Beep(frequency, duration)
 
             self.toTheEnd()
